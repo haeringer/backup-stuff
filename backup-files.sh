@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Copy/sync a list of files and directories to another directory.
 
@@ -13,7 +14,7 @@ elif [[ "$1" == "help" ]]; then
 elif [[ "$1" == "sync" ]]; then
 
   if [ ! -d "${backupdest}" ]; then
-    echo "Backup destination "${backupdest}" does not exist"
+    echo "Backup destination ${backupdest} does not exist"
     exit 1
   fi
 
@@ -22,12 +23,10 @@ elif [[ "$1" == "sync" ]]; then
   while IFS= read -r srcitem; do
 
   if [ -d "${srcitem}" ]; then
-    echo "syncing dir ${srcitem%/}"
     rsync --archive --delete --ignore-errors \
       --exclude={.env/,.venv/,venv/} \
       "${srcitem%/}" "${backupdest}"
   elif [ -f "${srcitem}" ]; then
-    echo "copying file ${srcitem}"
     cp "${srcitem}" "${backupdest}"
   fi
   
