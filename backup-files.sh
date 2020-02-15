@@ -18,7 +18,8 @@ elif [[ "$1" == "sync" ]]; then
     exit 1
   fi
 
-  # todo: check if a sync is still running, if yes, quit
+  exec 200>/tmp/$(basename ${0}).lock
+  flock -n 200 || { echo "error: sync is still in progress" >&2; exit 1; }
 
   while IFS= read -r srcitem; do
 
