@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# Copy/sync a list of files and directories to another directory.
+# Sync a list of files and directories from an input file to another location
 
 filelist=$2
 backupdest=$3
@@ -24,11 +24,11 @@ elif [[ "$1" == "sync" ]]; then
   while IFS= read -r srcitem; do
 
   if [ -d "${srcitem}" ]; then
-    rsync --archive --delete --ignore-errors \
+    rsync --archive --relative --delete \
       --exclude={.env/,.venv/,venv/} \
       "${srcitem%/}" "${backupdest}"
   elif [ -f "${srcitem}" ]; then
-    cp "${srcitem}" "${backupdest}"
+    rsync --archive --relative "${srcitem}" "${backupdest}"
   fi
   
   done < "${filelist}"
